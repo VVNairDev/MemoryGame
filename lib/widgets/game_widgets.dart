@@ -1,0 +1,226 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class NumberButton extends StatefulWidget {
+  final int number;
+  final VoidCallback onTap;
+  final bool isHighlighted;
+  final bool isSelected;
+
+  const NumberButton({
+    Key? key,
+    required this.number,
+    required this.onTap,
+    this.isHighlighted = false,
+    this.isSelected = false,
+  }) : super(key: key);
+
+  @override
+  State<NumberButton> createState() => _NumberButtonState();
+}
+
+class _NumberButtonState extends State<NumberButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
+
+    if (widget.isHighlighted) {
+      _animationController.forward();
+    }
+  }
+
+  @override
+  void didUpdateWidget(NumberButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // No animation during sequence display
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: widget.isHighlighted
+                  ? [const Color(0xFF00FFFF), const Color(0xFF0099FF)]
+                  : widget.isSelected
+                      ? [const Color(0xFF6200EA), const Color(0xFF3700B3)]
+                      : [const Color(0xFF2196F3), const Color(0xFF1976D2)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              if (widget.isHighlighted)
+                BoxShadow(
+                  color: const Color(0xFF00FFFF).withOpacity(0.8),
+                  blurRadius: 30,
+                  spreadRadius: 5,
+                ),
+              BoxShadow(
+                color: widget.isHighlighted
+                    ? const Color(0xFF00D4FF).withOpacity(0.6)
+                    : Colors.black.withOpacity(0.3),
+                blurRadius: widget.isHighlighted ? 25 : 8,
+                spreadRadius: widget.isHighlighted ? 3 : 0,
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              '${widget.number}',
+              style: GoogleFonts.roboto(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class DigitDisplay extends StatefulWidget {
+  final List<int> digits;
+
+  const DigitDisplay({
+    Key? key,
+    required this.digits,
+  }) : super(key: key);
+
+  @override
+  State<DigitDisplay> createState() => _DigitDisplayState();
+}
+
+class _DigitDisplayState extends State<DigitDisplay>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    )..forward();
+  }
+
+  @override
+  void didUpdateWidget(DigitDisplay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.digits.length != oldWidget.digits.length) {
+      _animationController.forward(from: 0.0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: Tween<double>(begin: 0.5, end: 1.0).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1A237E).withOpacity(0.8),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFF00D4FF),
+            width: 2,
+          ),
+        ),
+        child: Text(
+          widget.digits.isEmpty
+              ? '- - -'
+              : widget.digits.map((d) => d.toString()).join(' '),
+          style: GoogleFonts.roboto(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF00D4FF),
+            letterSpacing: 2,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class LevelProgressBar extends StatelessWidget {
+  final int currentLevel;
+  final int maxLevel;
+
+  const LevelProgressBar({
+    Key? key,
+    required this.currentLevel,
+    required this.maxLevel,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Level $currentLevel',
+              style: GoogleFonts.roboto(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              '/$maxLevel',
+              style: GoogleFonts.roboto(
+                fontSize: 14,
+                color: Colors.white60,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: LinearProgressIndicator(
+            value: currentLevel / maxLevel,
+            minHeight: 8,
+            backgroundColor: Colors.white24,
+            valueColor: const AlwaysStoppedAnimation<Color>(
+              Color(0xFF00D4FF),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
