@@ -190,13 +190,27 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Level Info
-                    Text(
-                      'Level ${state.currentLevel.level}',
-                      style: GoogleFonts.roboto(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF00D4FF),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Level ${state.currentLevel.level}',
+                          style: GoogleFonts.roboto(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF00D4FF),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          child: CountdownTimer(
+                            initialSeconds: (state.currentLevel.timeLimit / 1000).toInt(),
+                            onTimeUp: () {
+                              context.read<GameBloc>().add(const QuitGameEvent());
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -209,6 +223,18 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                     const SizedBox(height: 16),
                     // Display Input
                     DigitDisplay(digits: state.playerInput),
+                    if (state.showCorrectAnswer) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        'Correct:',
+                        style: GoogleFonts.roboto(
+                          fontSize: 12,
+                          color: Colors.red,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      DigitDisplay(digits: state.sequence),
+                    ],
                     const SizedBox(height: 24),
                     // Number Grid for Input
                     Container(

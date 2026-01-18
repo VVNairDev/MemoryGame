@@ -5,12 +5,14 @@ class GameLevel extends Equatable {
   final int sequenceLength;
   final int displayDuration;
   final int totalLevels;
+  final int timeLimit;
 
   const GameLevel({
     required this.level,
     required this.sequenceLength,
     required this.displayDuration,
     this.totalLevels = 100,
+    this.timeLimit = 30000,
   });
 
   GameLevel copyWith({
@@ -18,17 +20,19 @@ class GameLevel extends Equatable {
     int? sequenceLength,
     int? displayDuration,
     int? totalLevels,
+    int? timeLimit,
   }) {
     return GameLevel(
       level: level ?? this.level,
       sequenceLength: sequenceLength ?? this.sequenceLength,
       displayDuration: displayDuration ?? this.displayDuration,
       totalLevels: totalLevels ?? this.totalLevels,
+      timeLimit: timeLimit ?? this.timeLimit,
     );
   }
 
   @override
-  List<Object?> get props => [level, sequenceLength, displayDuration, totalLevels];
+  List<Object?> get props => [level, sequenceLength, displayDuration, totalLevels, timeLimit];
 }
 
 class GameStats extends Equatable {

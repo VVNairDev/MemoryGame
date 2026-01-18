@@ -65,12 +65,14 @@ class _HomeScreenState extends State<HomeScreen>
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
+          child: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                   // Game Logo Animation
                   ScaleTransition(
                     scale: Tween<double>(begin: 0.8, end: 1.0).animate(
@@ -244,6 +246,7 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                   ),
                 ],
+                ),
               ),
             ),
           ),

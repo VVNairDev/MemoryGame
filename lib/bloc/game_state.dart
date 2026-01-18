@@ -83,6 +83,7 @@ class PlayerInputState extends GameState {
   final List<int> playerInput;
   final int correctAttempts;
   final int wrongAttempts;
+  final bool showCorrectAnswer;
 
   const PlayerInputState({
     required this.currentLevel,
@@ -90,6 +91,7 @@ class PlayerInputState extends GameState {
     required this.playerInput,
     required this.correctAttempts,
     required this.wrongAttempts,
+    this.showCorrectAnswer = false,
   });
 
   @override
@@ -98,6 +100,8 @@ class PlayerInputState extends GameState {
         sequence,
         playerInput,
         correctAttempts,
+        wrongAttempts,
+        showCorrectAnswer,
         wrongAttempts,
       ];
 }

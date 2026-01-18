@@ -23,6 +23,7 @@ class _NumberButtonState extends State<NumberButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  bool _isPressed = false;
 
   @override
   void initState() {
@@ -43,7 +44,9 @@ class _NumberButtonState extends State<NumberButton>
   @override
   void didUpdateWidget(NumberButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // No animation during sequence display
+    if (widget.isHighlighted && !oldWidget.isHighlighted) {
+      _animationController.forward(from: 0.0);
+    }
   }
 
   @override
@@ -52,47 +55,70 @@ class _NumberButtonState extends State<NumberButton>
     super.dispose();
   }
 
+  void _handleTapDown(TapDownDetails details) {
+    setState(() => _isPressed = true);
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() => _isPressed = false);
+    widget.onTap();
+  }
+
+  void _handleTapCancel() {
+    setState(() => _isPressed = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaleTransition(
       scale: _scaleAnimation,
       child: GestureDetector(
-        onTap: widget.onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: widget.isHighlighted
-                  ? [const Color(0xFF00FFFF), const Color(0xFF0099FF)]
-                  : widget.isSelected
-                      ? [const Color(0xFF6200EA), const Color(0xFF3700B3)]
-                      : [const Color(0xFF2196F3), const Color(0xFF1976D2)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            boxShadow: [
-              if (widget.isHighlighted)
-                BoxShadow(
-                  color: const Color(0xFF00FFFF).withOpacity(0.8),
-                  blurRadius: 30,
-                  spreadRadius: 5,
-                ),
-              BoxShadow(
-                color: widget.isHighlighted
-                    ? const Color(0xFF00D4FF).withOpacity(0.6)
-                    : Colors.black.withOpacity(0.3),
-                blurRadius: widget.isHighlighted ? 25 : 8,
-                spreadRadius: widget.isHighlighted ? 3 : 0,
+        onTapDown: _handleTapDown,
+        onTapUp: _handleTapUp,
+        onTapCancel: _handleTapCancel,
+        child: AnimatedScale(
+          scale: _isPressed ? 0.9 : 1.0,
+          duration: const Duration(milliseconds: 100),
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: widget.isHighlighted
+                    ? [const Color(0xFF00FFFF), const Color(0xFF0099FF)]
+                    : _isPressed
+                        ? [const Color(0xFF4CAF50), const Color(0xFF45a049)]
+                        : widget.isSelected
+                            ? [const Color(0xFF6200EA), const Color(0xFF3700B3)]
+                            : [const Color(0xFF2196F3), const Color(0xFF1976D2)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              '${widget.number}',
-              style: GoogleFonts.roboto(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+              boxShadow: [
+                if (widget.isHighlighted)
+                  BoxShadow(
+                    color: const Color(0xFF00FFFF).withOpacity(0.8),
+                    blurRadius: 30,
+                    spreadRadius: 5,
+                  ),
+                BoxShadow(
+                  color: _isPressed
+                      ? const Color(0xFF4CAF50).withOpacity(0.6)
+                      : widget.isHighlighted
+                          ? const Color(0xFF00D4FF).withOpacity(0.6)
+                          : Colors.black.withOpacity(0.3),
+                  blurRadius: widget.isHighlighted ? 25 : _isPressed ? 15 : 8,
+                  spreadRadius: widget.isHighlighted ? 3 : _isPressed ? 2 : 0,
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                '${widget.number}',
+                style: GoogleFonts.roboto(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -221,6 +247,86 @@ class LevelProgressBar extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+class CountdownTimer extends StatefulWidget {
+  final int initialSeconds;
+  final VoidCallback? onTimeUp;
+
+  const CountdownTimer({
+    Key? key,
+    required this.initialSeconds,
+    this.onTimeUp,
+  }) : super(key: key);
+
+  @override
+  State<CountdownTimer> createState() => _CountdownTimerState();
+}
+
+class _CountdownTimerState extends State<CountdownTimer> {
+  late int remainingSeconds;
+  late int initialSeconds;
+
+  @override
+  void initState() {
+    super.initState();
+    remainingSeconds = widget.initialSeconds;
+    initialSeconds = widget.initialSeconds;
+    _startCountdown();
+  }
+
+  void _startCountdown() {
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) {
+        setState(() {
+          remainingSeconds--;
+        });
+        if (remainingSeconds > 0) {
+          _startCountdown();
+        } else {
+          widget.onTimeUp?.call();
+        }
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isWarning = remainingSeconds <= 5;
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: isWarning 
+            ? Colors.red.withOpacity(0.2) 
+            : const Color(0xFF1A237E).withOpacity(0.8),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isWarning ? Colors.red : const Color(0xFF00D4FF),
+          width: 2,
+        ),
+      ),
+      child: Column(
+        children: [
+          Text(
+            'Time Remaining',
+            style: GoogleFonts.roboto(
+              fontSize: 10,
+              color: Colors.white60,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '$remainingSeconds',
+            style: GoogleFonts.roboto(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: isWarning ? Colors.red : const Color(0xFF00D4FF),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

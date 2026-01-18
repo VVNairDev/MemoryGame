@@ -40,10 +40,11 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     sequence = [];
     playerInput = [];
     
-    // Generate initial 3-number sequence
+    // Generate initial sequence with random digits based on level
+    int sequenceLength = gameUtils.calculateSequenceLength(event.initialLevel);
     Random random = Random();
-    for (int i = 0; i < 3; i++) {
-      sequence.add(random.nextInt(9));
+    for (int i = 0; i < sequenceLength; i++) {
+      sequence.add(random.nextInt(10)); // 0-9
     }
 
     await Future.delayed(const Duration(milliseconds: 500));
@@ -56,7 +57,10 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     Emitter<GameState> emit,
   ) {
     Random random = Random();
-    sequence.add(random.nextInt(9));
+    // Only add a digit if we haven't reached the max
+    if (sequence.length < GameUtils.maxDigits) {
+      sequence.add(random.nextInt(10)); // 0-9
+    }
     
     emit(GamePlayingState(
       currentLevel: currentLevel,
@@ -127,16 +131,17 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       // Check if the latest input is correct
       if (playerInput.last != sequence[playerInput.length - 1]) {
         wrongAttempts++;
-        // Wrong input - game over
+        // Wrong input - show user what was correct
         emit(PlayerInputState(
           currentLevel: currentLevel,
           sequence: sequence,
           playerInput: playerInput,
           correctAttempts: correctAttempts,
           wrongAttempts: wrongAttempts,
+          showCorrectAnswer: true,
         ));
 
-        Future.delayed(const Duration(milliseconds: 500), () {
+        Future.delayed(const Duration(milliseconds: 1500), () {
           add(const QuitGameEvent());
         });
       } else {
@@ -209,12 +214,19 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       return;
     }
 
-    currentLevel = _generateGameLevel(currentLevel.level + 1);
+    int nextLevel = currentLevel.level + 1;
+    currentLevel = _generateGameLevel(nextLevel);
     playerInput = [];
 
-    // Add one new digit to sequence for the new level
+    // Generate completely new random sequence for the new level
     Random random = Random();
-    sequence.add(random.nextInt(9));
+    int requiredLength = gameUtils.calculateSequenceLength(nextLevel);
+    
+    // Clear and rebuild sequence with random digits
+    sequence.clear();
+    for (int i = 0; i < requiredLength; i++) {
+      sequence.add(random.nextInt(10)); // 0-9
+    }
 
     await Future.delayed(const Duration(milliseconds: 500));
     add(const DisplaySequenceEvent());
@@ -246,14 +258,16 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   GameLevel _generateGameLevel(int level) {
-    int sequenceLength = 3 + (level ~/ 10);
+    int sequenceLength = gameUtils.calculateSequenceLength(level);
     int displayDuration = gameUtils.calculateDisplayDuration(level, sequenceLength);
+    int timeLimit = gameUtils.calculatePlayerInputTimeLimit(level);
 
     return GameLevel(
       level: level,
       sequenceLength: sequenceLength,
       displayDuration: displayDuration,
       totalLevels: 100,
+      timeLimit: timeLimit,
     );
   }
 
