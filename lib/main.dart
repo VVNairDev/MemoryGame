@@ -6,6 +6,7 @@ import 'package:number_memory_game/bloc/game_state.dart';
 import 'package:number_memory_game/screens/game_play_screen.dart';
 import 'package:number_memory_game/screens/game_result_screen.dart';
 import 'package:number_memory_game/screens/home_screen.dart';
+import 'package:number_memory_game/screens/splash_screen.dart';
 import 'package:number_memory_game/utils/game_utils.dart';
 import 'package:number_memory_game/utils/app_constants.dart';
 
@@ -38,11 +39,34 @@ class MemoryGameApp extends StatelessWidget {
   }
 }
 
-class MemoryGameHome extends StatelessWidget {
+class MemoryGameHome extends StatefulWidget {
   const MemoryGameHome({Key? key}) : super(key: key);
 
   @override
+  State<MemoryGameHome> createState() => _MemoryGameHomeState();
+}
+
+class _MemoryGameHomeState extends State<MemoryGameHome> {
+  bool _showSplash = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Splash screen will trigger after its animation
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_showSplash) {
+      return SplashScreen(
+        onComplete: () {
+          setState(() {
+            _showSplash = false;
+          });
+        },
+      );
+    }
+
     return BlocBuilder<GameBloc, GameState>(
       builder: (context, state) {
         if (state is GameInitial) {
