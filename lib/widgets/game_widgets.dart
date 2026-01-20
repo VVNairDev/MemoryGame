@@ -158,8 +158,21 @@ class _DigitDisplayState extends State<DigitDisplay>
   @override
   void didUpdateWidget(DigitDisplay oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Trigger animation whenever digits change
-    _animationController.forward(from: 0.0);
+    // Check if digits list changed (by length or content)
+    if (oldWidget.digits.length != widget.digits.length ||
+        !_listsEqual(oldWidget.digits, widget.digits)) {
+      // Restart animation from beginning
+      _animationController.forward(from: 0.0);
+    }
+  }
+
+  // Helper method to compare two lists
+  bool _listsEqual(List<int> list1, List<int> list2) {
+    if (list1.length != list2.length) return false;
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) return false;
+    }
+    return true;
   }
 
   @override

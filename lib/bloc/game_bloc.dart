@@ -131,6 +131,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     // Check if input is valid before adding
     if (playerInput.length < sequence.length) {
       playerInput.add(event.digit);
+      // Create a new list instance for Equatable comparison
+      final List<int> newPlayerInput = List.from(playerInput);
 
       // Check if the latest input is correct
       if (playerInput.last != sequence[playerInput.length - 1]) {
@@ -141,7 +143,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         emit(PlayerInputState(
           currentLevel: currentLevel,
           sequence: sequence,
-          playerInput: playerInput,
+          playerInput: newPlayerInput,
           correctAttempts: correctAttempts,
           wrongAttempts: wrongAttempts,
           showCorrectAnswer: true,
@@ -167,7 +169,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
           emit(PlayerInputState(
             currentLevel: currentLevel,
             sequence: sequence,
-            playerInput: playerInput,
+            playerInput: newPlayerInput,
             correctAttempts: correctAttempts,
             wrongAttempts: wrongAttempts,
           ));

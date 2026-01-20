@@ -96,13 +96,13 @@ class PlayerInputState extends GameState {
 
   @override
   List<Object?> get props => [
-        currentLevel,
-        sequence,
-        playerInput,
+        currentLevel.level,  // Use primitive values instead of objects
+        sequence.length,     // Use sequence length instead of full list
+        ...playerInput,      // Expand playerInput elements
         correctAttempts,
         wrongAttempts,
         showCorrectAnswer,
-        wrongAttempts,
+        playerInput.hashCode,  // Add hashcode for extra safety
       ];
 }
 

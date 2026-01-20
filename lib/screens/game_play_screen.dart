@@ -72,9 +72,10 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                     const SizedBox(height: 32),
                     // Display current digit being shown
                     Text(
-                      'Remember:',
+                      'Remember this Sequence:',
                       style: GoogleFonts.roboto(
-                        fontSize: 16,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                         color: Colors.white70,
                       ),
                     ),
@@ -219,7 +220,42 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                     ),
                     const SizedBox(height: 16),
                     // Display Input
-                    DigitDisplay(digits: state.playerInput),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1A237E).withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: const Color(0xFF00D4FF),
+                          width: 4,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF00D4FF).withOpacity(0.6),
+                            blurRadius: 20,
+                            spreadRadius: 3,
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        state.playerInput.isEmpty
+                            ? '- - -'
+                            : state.playerInput.map((d) => d.toString()).join(' '),
+                        style: GoogleFonts.roboto(
+                          fontSize: 48,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF00FFFF),
+                          letterSpacing: 8,
+                          shadows: [
+                            Shadow(
+                              color: const Color(0xFF00D4FF).withOpacity(0.8),
+                              blurRadius: 15,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                     if (state.showCorrectAnswer) ...[
                       const SizedBox(height: 12),
                       Text(
@@ -230,7 +266,28 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      DigitDisplay(digits: state.sequence),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.red,
+                            width: 2,
+                          ),
+                        ),
+                        child: Text(
+                          state.sequence.isEmpty
+                              ? '- - -'
+                              : state.sequence.map((d) => d.toString()).join(' '),
+                          style: GoogleFonts.roboto(
+                            fontSize: 48,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red.shade300,
+                            letterSpacing: 8,
+                          ),
+                        ),
+                      ),
                     ],
                     const SizedBox(height: 24),
                     // Number Grid for Input
