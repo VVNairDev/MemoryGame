@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:number_memory_game/bloc/game_bloc.dart';
 import 'package:number_memory_game/bloc/game_event.dart';
 import 'package:number_memory_game/bloc/game_state.dart';
-import 'package:intl/intl.dart';
 
 class GameResultScreen extends StatefulWidget {
   const GameResultScreen({Key? key}) : super(key: key);
@@ -345,12 +344,6 @@ class _GameResultScreenState extends State<GameResultScreen>
         ],
       ),
     );
-  }
-
-  String _formatDuration(Duration duration) {
-    int minutes = duration.inMinutes;
-    int seconds = duration.inSeconds.remainder(60);
-    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
   String _getPerformanceMessage(int levelReached) {

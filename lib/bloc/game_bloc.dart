@@ -5,6 +5,7 @@ import 'package:number_memory_game/bloc/game_event.dart';
 import 'package:number_memory_game/bloc/game_state.dart';
 import 'package:number_memory_game/models/game_models.dart';
 import 'package:number_memory_game/utils/game_utils.dart';
+import 'package:number_memory_game/utils/sound_manager.dart';
 
 class GameBloc extends Bloc<GameEvent, GameState> {
   final GameUtils gameUtils;
@@ -82,6 +83,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       // Delay before showing next number (500ms)
       await Future.delayed(const Duration(milliseconds: 500));
       
+      // Play sound when displaying number
+      SoundManager().playNumberDisplaySound();
+      
       emit(SequenceDisplayingState(
         currentLevel: currentLevel,
         sequence: sequence,
@@ -131,6 +135,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       // Check if the latest input is correct
       if (playerInput.last != sequence[playerInput.length - 1]) {
         wrongAttempts++;
+        // Play error sound for wrong input
+        SoundManager().playErrorSound();
         // Wrong input - show user what was correct
         emit(PlayerInputState(
           currentLevel: currentLevel,
@@ -149,6 +155,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         if (playerInput.length == sequence.length) {
           // Level completed
           correctAttempts++;
+          // Play win sound
+          SoundManager().playWinSound();
           emit(LevelCompleteState(
             currentLevel: currentLevel,
             correctAttempts: correctAttempts,
@@ -209,10 +217,14 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     Emitter<GameState> emit,
   ) async {
     if (currentLevel.level >= 100) {
-      // Game won
+      // Game won - play level up sound
+      SoundManager().playWinSound();
       add(const QuitGameEvent());
       return;
     }
+
+    // Play level up sound
+    SoundManager().playLevelUpSound();
 
     int nextLevel = currentLevel.level + 1;
     currentLevel = _generateGameLevel(nextLevel);
@@ -245,6 +257,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   ) {
     DateTime gameEndTime = DateTime.now();
     Duration gameDuration = gameEndTime.difference(gameStartTime);
+
+    // Play lose sound
+    SoundManager().playLoseSound();
 
     GameResult result = GameResult(
       levelReached: currentLevel.level,

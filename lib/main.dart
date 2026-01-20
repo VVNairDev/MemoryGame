@@ -20,7 +20,7 @@ class MemoryGameApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Number Memory Game',
+      title: 'Memorize Numbers',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         useMaterial3: true,

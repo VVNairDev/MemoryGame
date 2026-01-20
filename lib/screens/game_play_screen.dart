@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:number_memory_game/bloc/game_bloc.dart';
 import 'package:number_memory_game/bloc/game_event.dart';
@@ -40,8 +39,6 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
     BuildContext context,
     SequenceDisplayingState state,
   ) {
-    final screenSize = MediaQuery.of(context).size;
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -239,17 +236,17 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
                     // Number Grid for Input
                     Container(
                       width: gridSize,
-                      height: gridSize,
+                      height: gridSize + 50,
                       padding: const EdgeInsets.all(8),
                       child: GridView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
+                          crossAxisCount: 5,
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
                         ),
-                        itemCount: 9,
+                        itemCount: 10,
                         itemBuilder: (context, index) {
                           bool isSelected =
                               state.playerInput.contains(index) &&
@@ -306,7 +303,6 @@ class _GamePlayScreenState extends State<GamePlayScreen> {
     BuildContext context,
     LevelCompleteState state,
   ) {
-    final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(

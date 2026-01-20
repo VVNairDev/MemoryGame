@@ -21,7 +21,7 @@ void setupSystemUI() {
 
 // Constants for easier theming
 class AppConstants {
-  static const String appName = 'Number Memory';
+  static const String appName = 'Memorize Numbers';
   static const int maxLevels = 100;
   
   // Colors

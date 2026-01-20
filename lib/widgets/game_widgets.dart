@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:number_memory_game/utils/sound_manager.dart';
 
 class NumberButton extends StatefulWidget {
   final int number;
@@ -61,6 +62,7 @@ class _NumberButtonState extends State<NumberButton>
 
   void _handleTapUp(TapUpDetails details) {
     setState(() => _isPressed = false);
+    SoundManager().playClickSound();
     widget.onTap();
   }
 
@@ -148,7 +150,7 @@ class _DigitDisplayState extends State<DigitDisplay>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 200),
       vsync: this,
     )..forward();
   }
@@ -156,9 +158,8 @@ class _DigitDisplayState extends State<DigitDisplay>
   @override
   void didUpdateWidget(DigitDisplay oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.digits.length != oldWidget.digits.length) {
-      _animationController.forward(from: 0.0);
-    }
+    // Trigger animation whenever digits change
+    _animationController.forward(from: 0.0);
   }
 
   @override
@@ -170,28 +171,42 @@ class _DigitDisplayState extends State<DigitDisplay>
   @override
   Widget build(BuildContext context) {
     return ScaleTransition(
-      scale: Tween<double>(begin: 0.5, end: 1.0).animate(
-        CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+      scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+        CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
       ),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         decoration: BoxDecoration(
-          color: const Color(0xFF1A237E).withOpacity(0.8),
-          borderRadius: BorderRadius.circular(16),
+          color: const Color(0xFF1A237E).withOpacity(0.9),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: const Color(0xFF00D4FF),
-            width: 2,
+            width: 4,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF00D4FF).withOpacity(0.6),
+              blurRadius: 20,
+              spreadRadius: 3,
+            ),
+          ],
         ),
         child: Text(
           widget.digits.isEmpty
               ? '- - -'
               : widget.digits.map((d) => d.toString()).join(' '),
           style: GoogleFonts.roboto(
-            fontSize: 24,
+            fontSize: 48,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF00D4FF),
-            letterSpacing: 2,
+            color: const Color(0xFF00FFFF),
+            letterSpacing: 8,
+            shadows: [
+              Shadow(
+                color: const Color(0xFF00D4FF).withOpacity(0.8),
+                blurRadius: 15,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
         ),
       ),

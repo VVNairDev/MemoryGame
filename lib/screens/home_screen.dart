@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen>
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'Number Memory',
+          'Memorize Numbers',
           style: GoogleFonts.roboto(
             fontSize: 28,
             fontWeight: FontWeight.bold,
