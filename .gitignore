@@ -1,3 +1,8 @@
+# Ignore all key.properties files
+key.properties
+
+# Also ignore key.properties in any subdirectory (useful for Android projects)
+**/key.properties
 # Miscellaneous
 *.class
 *.log
