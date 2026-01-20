@@ -87,45 +87,6 @@ lib/
    flutter run
    ```
 
-## Building for Android Play Store
-
-### 1. Create Signing Key
-```bash
-keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA -keysize 4096 -validity 10950 -alias upload
-```
-
-### 2. Reference the Key
-Edit `android/key.properties`:
-```properties
-storePassword=<password>
-keyPassword=<password>
-keyAlias=upload
-storeFile=<path-to-keystore-file>
-```
-
-### 3. Update build.gradle
-The signing configuration is already set up in `android/app/build.gradle`
-
-### 4. Build Release APK
-```bash
-flutter build apk --release
-```
-
-### 5. Build App Bundle
-```bash
-flutter build appbundle --release
-```
-
-## Play Store Requirements
-
-- ✅ App name: "Number Memory"
-- ✅ Package name: `com.example.number_memory_game`
-- ✅ Min SDK: 21
-- ✅ Target SDK: 33+
-- ✅ Permissions: None required
-- ✅ Screen sizes: All supported
-- ✅ No ads/monetization
-
 ## Tips for Best Performance
 
 1. **Early Levels** - Focus on getting patterns into memory
@@ -137,9 +98,7 @@ flutter build appbundle --release
 
 - **v1.0.0** - Initial release with 100 levels
 
-## License
 
-This project is licensed under the MIT License - see LICENSE file for details.
 
 ## Contributing
 
