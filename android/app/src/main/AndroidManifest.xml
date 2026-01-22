@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.number_memory_game">
+    package="app.vvnairdev.memorize_number">
    <application
         android:label="Memorize Numbers"
         android:name="${applicationName}"

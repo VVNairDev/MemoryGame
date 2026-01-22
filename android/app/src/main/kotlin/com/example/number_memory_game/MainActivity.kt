@@ -1,4 +1,4 @@
-package com.example.number_memory_game
+package app.vvnairdev.memorize_number
 
 import io.flutter.embedding.android.FlutterActivity
 
